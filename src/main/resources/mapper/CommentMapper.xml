@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.kinggame.dao.CommentMapper">
+<resultMap type="com.xu.kinggame.entity.NewsComment" id="BaseResultMap">
+	<id column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="news_id" jdbcType="BIGINT" property="newId" />
+    <result column="commentator" jdbcType="VARCHAR" property="commentator" />
+    <result column="comment_body" jdbcType="VARCHAR" property="commentBody" />
+    <result column="comment_status" jdbcType="TINYINT" property="commentStatus" />
+    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+</resultMap>
+<sql id="Base_Column_List">
+    comment_id, news_id, commentator, comment_body, comment_status, is_deleted,create_time
+</sql>
+<insert id="addComment" parameterType="com.xu.kinggame.entity.NewsComment">
+    insert into tb_news_comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        comment_id,
+      </if>
+      <if test="newId != null">
+        news_id,
+      </if>
+      <if test="commentator != null">
+        commentator,
+      </if>
+      <if test="commentBody != null">
+        comment_body,
+      </if>
+      <if test="commentStatus != null">
+        comment_status,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        #{commentId,jdbcType=BIGINT},
+      </if>
+      <if test="newId != null">
+        #{newId,jdbcType=BIGINT},
+      </if>
+      <if test="commentator != null">
+        #{commentator,jdbcType=VARCHAR},
+      </if>
+      <if test="commentBody != null">
+        #{commentBody,jdbcType=VARCHAR},
+      </if>
+      <if test="commentStatus != null">
+        #{commentStatus,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="selectComment" parameterType="Map" resultMap="BaseResultMap">
+  select
+  <include refid="Base_Column_List"/>
+  from tb_news_comment
+  where is_deleted=0
+  order by comment_id desc
+  <if test="start!=null and limit!=null">
+  limit #{start},#{limit}
+  </if>
+  </select>
+  
+  <select id="selectCommentCount" parameterType="Map" resultType="int">
+  select count(*) from tb_news_comment where is_deleted=0
+  </select>
+  
+  <update id="deleteComment" parameterType="java.lang.Integer">
+  update tb_news_comment
+  set is_deleted=1 where comment_id in
+  <foreach item="id" collection="array" open="(" separator="," close=")">
+  #{id}
+  </foreach>
+  </update>
+  
+  <update id="checkComment" parameterType="java.lang.Integer">
+  update tb_news_comment
+  set comment_status=1 where comment_id in
+  <foreach item="id" collection="array" open="(" separator="," close=")">
+  #{id}
+  </foreach>
+  and comment_status=0
+  </update>
+  
+</mapper>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.kinggame.dao.NewsMapper">
+<resultMap type="com.xu.kinggame.entity.News" id="BaseResultMap">
+		<id column="news_id" jdbcType="BIGINT" property="newId"/>
+        <result column="news_title" jdbcType="VARCHAR" property="newTitle"/>
+        <result column="news_category_id" jdbcType="BIGINT" property="newKindId"/>
+        <result column="news_cover_image" jdbcType="VARCHAR" property="newImage"/>
+        <result column="news_content" jdbcType="VARCHAR" property="newContent"/>
+        <result column="news_status" jdbcType="TINYINT" property="newStatus"/>
+        <result column="news_views" jdbcType="BIGINT" property="newView"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+</resultMap>
+
+<sql id="Base_Column_List">
+news_id,news_title,news_category_id,news_cover_image,news_content,news_status,news_views,is_deleted,create_time,update_time
+</sql>
+
+<select id="selectNews" parameterType="Map" resultMap="BaseResultMap">
+select
+<include refid="Base_Column_List"/>
+from tb_news
+where is_deleted=0
+order by news_id desc
+<if test="start!=null and limit!=null">
+limit #{start},#{limit}
+</if>
+</select>
+
+<select id="selectCount" parameterType="Map" resultType="int">
+select count(*) from tb_news where is_deleted=0
+</select>
+
+<insert id="addNew" parameterType="com.xu.kinggame.entity.News">
+insert into tb_news
+<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="newId != null">
+                news_id,
+            </if>
+            <if test="newTitle != null">
+                news_title,
+            </if>
+            <if test="newKindId != null">
+                news_category_id,
+            </if>
+            <if test="newImage != null">
+                news_cover_image,
+            </if>
+            <if test="newContent != null">
+                news_content,
+            </if>
+            <if test="newStatus != null">
+                news_status,
+            </if>
+            <if test="newView != null">
+                news_views,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="newId != null">
+                #{newId,jdbcType=BIGINT},
+            </if>
+            <if test="newTitle != null">
+                #{newTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="newKindId != null">
+                #{newKindId,jdbcType=BIGINT},
+            </if>
+            <if test="newImage != null">
+                #{newImage,jdbcType=VARCHAR},
+            </if>
+            <if test="newContent != null">
+                #{newContent,jdbcType=VARCHAR},
+            </if>
+            <if test="newStatus != null">
+                #{newStatus,jdbcType=TINYINT},
+            </if>
+            <if test="newView != null">
+                #{newView,jdbcType=BIGINT},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+</trim>
+</insert>
+ 
+ <select id="selectNewById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ select 
+ <include refid="Base_Column_List"/>
+ from tb_news
+ where is_deleted=0 AND news_id=#{newId,jdbcType=BIGINT}
+ </select>
+ 
+ <update id="updateNew" parameterType="com.xu.kinggame.entity.News">
+ 	update tb_news
+ 	<set>
+ 			 <if test="newTitle != null">
+                news_title = #{newTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="newKindId != null">
+                news_category_id = #{newKindId,jdbcType=BIGINT},
+            </if>
+            <if test="newImage != null">
+                news_cover_image = #{newImage,jdbcType=VARCHAR},
+            </if>
+            <if test="newContent != null">
+                news_content= #{newContent,jdbcType=VARCHAR},
+            </if>
+            <if test="newStatus != null">
+                news_status = #{newStatus,jdbcType=TINYINT},
+            </if>
+            <if test="newView != null">
+                news_views = #{newView,jdbcType=BIGINT},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+ 	</set>
+ 	where news_id=#{newId,jdbcType=BIGINT}
+ </update>
+ 
+   <update id="deleteNew" parameterType="java.lang.Integer">
+   update tb_news
+   set is_deleted=1
+   where news_id in
+   <foreach item="id" collection="array" open="(" separator="," close=")">
+   #{id}
+   </foreach>
+   </update>
+ 
+</mapper>
