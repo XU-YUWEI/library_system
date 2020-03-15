@@ -3,4 +3,4 @@
 ＃library_system.sql
 数据库文件，直接运行即可
 ＃pom.xml
-约会的项目如果出现maven版本出错，可以pom。xml的maven-jar-plugin.version改上合适的版本号。
+引入的项目如果出现maven版本错误，可以在pom.xml的maven-jar-plugin.version改上合适的版本号。
